@@ -1,0 +1,194 @@
+body {
+	background-color: #ffffff;
+}
+
+.title {
+	font-family: 'Poppins', sans-serif;
+	font-size: 1.5em;
+	text-align: center;
+}
+
+.wrapper {
+	float: left;
+	width: 100%;
+	text-align: center;
+	position: relative;
+	top: 50%;
+	left: 50%;
+	transform: translate(-50%, -50%);
+}
+
+.mybtn {
+	display: inline-block;
+}
+
+.file-upload {
+	background-color: #ffffff;
+	width: 600px;
+	margin: 0 auto;
+	padding: 20px;
+}
+
+.file-upload-btn {
+	width: 100%;
+	margin: 0;
+	color: #000;
+	background: #c0c0c0;
+	border: none;
+	padding: 10px;
+	border-radius: 4px;
+	border-bottom: 4px solid #000000;
+	transition: all 0.2s ease;
+	outline: none;
+	text-transform: uppercase;
+	font-weight: 700;
+}
+
+.file-upload-btn:hover {
+	background: #808080;
+	color: #ffffff;
+	transition: all 0.2s ease;
+	cursor: pointer;
+}
+
+.file-upload-btn:active {
+	border: 0;
+	transition: all 0.2s ease;
+}
+
+.file-upload-content {
+	display: none;
+	text-align: center;
+}
+
+.file-upload-input {
+	position: absolute;
+	margin: 0;
+	padding: 0;
+	width: 100%;
+	height: 100%;
+	outline: none;
+	opacity: 0;
+	cursor: pointer;
+}
+
+.image-upload-wrap {
+	margin-top: 20px;
+	border: 2px dashed #000000;
+	position: relative;
+}
+
+.image-dropping,
+.image-upload-wrap:hover {
+	background-color: #808080;
+	border: 4px dashed #ffffff;
+}
+
+.image-title-wrap {
+	padding: 0 15px 15px 15px;
+	color: #222;
+}
+
+.drag-text {
+	text-align: center;
+}
+
+.drag-text h3 {
+	font-weight: 100;
+	text-transform: uppercase;
+	color: #000000;
+	padding: 60px 0;
+}
+
+.file-upload-image {
+	max-height: 200px;
+	max-width: 200px;
+	margin: auto;
+	padding: 20px;
+}
+
+.remove-image {
+	width: 200px;
+	margin: 0;
+	color: #fff;
+	background: #cd4535;
+	border: none;
+	padding: 10px;
+	border-radius: 4px;
+	border-bottom: 4px solid #b02818;
+	transition: all 0.2s ease;
+	outline: none;
+	text-transform: uppercase;
+	font-weight: 700;
+}
+
+.remove-image:hover {
+	background: #c13b2a;
+	color: #ffffff;
+	transition: all 0.2s ease;
+	cursor: pointer;
+}
+
+.remove-image:active {
+	border: 0;
+	transition: all 0.2s ease;
+}
+
+#print-subtitle {
+	font-family: 'Poppins', sans-serif;
+	font-size: 2.5em;
+	text-align: center;
+	color: #4b0082;
+	line-height: 2.5em;
+}
+
+#print-explain {
+	font-family: 'Poppins', sans-serif;
+	font-size: 1em;
+	width: 600px;
+	height: 300px;
+	text-align: center;
+	vertical-align: middle;
+	margin: 0 auto;
+}
+
+.race-label {
+	width: 20%;
+	text-align: left;
+	height: 2rem;
+}
+
+.container {
+	background-color: rgb(192, 192, 192);
+	width: 100%;
+	border-radius: 15px;
+}
+
+.skill {
+	background-color: rgb(131, 125, 217, 1);
+	color: white;
+	padding: 1%;
+	text-align: right;
+	font-size: 20px;
+	border-radius: 15px;
+}
+
+.percent-text {
+	font-size: 1rem;
+	color: #ffffff;
+}
+
+#label-container {
+	width: 45%;
+	margin: 0 auto;
+}
+
+label {
+	cursor: pointer;
+	display: inline-block;
+	width: 90px;
+	height: 41px;
+	box-shadow: 0 0 0 8px #e5e9ea inset;
+	border-radius: 30px;
+	position: relative;
+}

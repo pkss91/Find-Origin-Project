@@ -1,0 +1,213 @@
+<!DOCTYPE html>
+<html>
+	<head>
+		<link rel="stylesheet" href="style.css" />
+		<link rel="preconnect" href="https://fonts.googleapis.com" />
+		<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+		<link
+			href="https://fonts.googleapis.com/css2?family=Outfit:wght@200&family=Poppins:wght@200;400&display=swap"
+			rel="stylesheet"
+		/>
+	</head>
+	<body>
+		<p class="title">
+			Test Your Origin!
+		</p>
+		<div class="wrapper">
+			<button class="mybtn" type="button" onclick="init()">Start</button>
+			<button class="mybtn" type="button" onclick="predict()">Predict</button>
+		</div>
+		<script
+			class="jsbin"
+			src="https://ajax.googleapis.com/ajax/libs/jquery/1/jquery.min.js"
+		></script>
+		<div class="file-upload">
+			<button
+				class="file-upload-btn"
+				type="button"
+				onclick="$('.file-upload-input').trigger( 'click' )"
+			>
+				Add Image
+			</button>
+
+			<div class="image-upload-wrap">
+				<input
+					class="file-upload-input"
+					type="file"
+					onchange="readURL(this);"
+					accept="image/*"
+				/>
+				<div class="drag-text">
+					<h3>Drag and drop a file or select add Image</h3>
+				</div>
+			</div>
+			<div class="file-upload-content">
+				<img class="file-upload-image" id="face-image" src="#" alt="your image" />
+				<div class="image-title-wrap">
+					<button type="button" onclick="removeUpload()" class="remove-image">
+						Remove <span class="image-title">Uploaded Image</span>
+					</button>
+				</div>
+			</div>
+		</div>
+		<div id="print-subtitle"></div>
+		<div id="print-explain"></div>
+		<div id="webcam-container"></div>
+		<div id="label-container"></div>
+		<div id="label-container" class="d-flex flex-column justify-content-around"></div>
+		<script src="https://cdn.jsdelivr.net/npm/@tensorflow/tfjs@1.3.1/dist/tf.min.js"></script>
+		<script src="https://cdn.jsdelivr.net/npm/@teachablemachine/image@0.8/dist/teachablemachine-image.min.js"></script>
+		<script>
+			function readURL(input) {
+				if (input.files && input.files[0]) {
+					var reader = new FileReader();
+
+					reader.onload = function (e) {
+						$('.image-upload-wrap').hide();
+
+						$('.file-upload-image').attr('src', e.target.result);
+						$('.file-upload-content').show();
+
+						$('.image-title').html(input.files[0].name);
+					};
+
+					reader.readAsDataURL(input.files[0]);
+				} else {
+					removeUpload();
+				}
+			}
+
+			function removeUpload() {
+				$('.file-upload-input').replaceWith($('.file-upload-input').clone());
+				$('.file-upload-content').hide();
+				$('.image-upload-wrap').show();
+			}
+			$('.image-upload-wrap').bind('dragover', function () {
+				$('.image-upload-wrap').addClass('image-dropping');
+			});
+			$('.image-upload-wrap').bind('dragleave', function () {
+				$('.image-upload-wrap').removeClass('image-dropping');
+			});
+		</script>
+		<script type="text/javascript">
+			// More API functions here:
+			// https://github.com/googlecreativelab/teachablemachine-community/tree/master/libraries/image
+
+			// the link to your model provided by Teachable Machine export panel
+			const URL = 'https://teachablemachine.withgoogle.com/models/YgW2GBNUn/';
+
+			let model, webcam, labelContainer, maxPredictions;
+
+			// Load the image model and setup the webcam
+			async function init() {
+				const modelURL = URL + 'model.json';
+				const metadataURL = URL + 'metadata.json';
+
+				// load the model and metadata
+				// Refer to tmImage.loadFromFiles() in the API to support files from a file picker
+				// or files from your local hard drive
+				// Note: the pose library adds "tmImage" object to your window (window.tmImage)
+				model = await tmImage.load(modelURL, metadataURL);
+				maxPredictions = model.getTotalClasses();
+				// append elements to the DOM
+				labelContainer = document.getElementById('label-container');
+				for (let i = 0; i < maxPredictions; i++) {
+					// and class labels
+					labelContainer.appendChild(document.createElement('div'));
+				}
+			}
+
+			// run the webcam image through the image model
+			async function predict() {
+				// predict can take in an image, video or canvas html element
+				var image = document.getElementById('face-image');
+				const prediction = await model.predict(image, false);
+				prediction.sort((a, b) => parseFloat(b.probability) - parseFloat(a.probability));
+				document.getElementById('print-subtitle').innerHTML =
+					'You are ' + prediction[0].className + '!';
+				var resultExplain = '';
+				switch (prediction[0].className) {
+					case 'Celt':
+						resultExplain =
+							'The Celts were a collection of tribes with origins in central Europe that shared a similar language, religious beliefs, traditions and culture. It’s believed that the Celtic culture started to evolve as early as 1200 B.C. The Celts spread throughout western Europe—including Britain, Ireland, France and Spain—via migration. Their legacy remains most prominent in Ireland and Great Britain, where traces of their language and culture are still prominent today.The existence of the Celts was first documented in the seventh or eighth century B.C. The Roman Empire, which ruled much of southern Europe at that time, referred to the Celts as “Galli,” meaning barbarians.However, the Celts were anything but barbarians, and many aspects of their culture and language have survived through the centuries.';
+						break;
+					case 'Manchurian':
+						resultExplain =
+							"The Manchu are a Tungistic people — meaning from Tunguska — of Northeastern China. Originally called Jurchens, they are the ethnic minority for whom the region of Manchuria is named. Today, they are the fifth-largest ethnic group in China, following the Han Chinese, Zhuang, Uighurs, and Hui. Their earliest known control of China came in the form of the Jin Dynasty of 1115 to 1234, but their prevalence by name Manchu didn't come until later in the 17th century.Still, unlike many other Chinese ethnicities, the women of the Manchu people were more assertive and had more power within their culture — a trait which carried into their assimilation into Chinese culture in the early 20th century. ";
+						break;
+					case 'Mongolian':
+						resultExplain =
+							'The Mongolians have kept their nomadic living style for hundreds of years. Mongolian originally was the name of one of the Mongolian tribes roaming along the Erguna River. At the beginning of the 13th century, a Mongolian tribe headed by Genghis Khan unified all the Mongolian tribes, giving birth to a new people -- the Mongolian ethnic minority. In 1206, he was elected the Great Khan of all Mongols with the title of Genghis Khan. Kublai Khan, the grandson of Genghis Khan founded the Yuan Dynasty (1206-1368) in 1272, and subdued the Southern Song (1127-1279) in 1279, bringing the whole of China under his centralized rule.';
+						break;
+					case 'Hun':
+						resultExplain =
+							"The Huns were a nomadic people who lived in Central Asia, the Caucasus, and Eastern Europe between the 4th and 6th century AD. According to European tradition, they were first reported living east of the Volga River, in an area that was part of Scythia at the time; the Huns' arrival is associated with the migration westward of an Iranian people, the Alans.";
+						break;
+					case 'Germanic':
+						resultExplain =
+							'The Germanic peoples were a historical group of people living in Central Europe and Scandinavia. Since the 19th century, they have traditionally been defined by the use of ancient and early medieval Germanic languages and are thus equated at least approximately with Germanic-speaking peoples, although different academic disciplines have their own definitions of what makes someone or something Germanic. The Romans named the area in which Germanic peoples lived Germania, stretching West to East between the Vistula and Rhine rivers and north to south from Southern Scandinavia to the upper Danube. ';
+						break;
+					case 'Latin':
+						resultExplain =
+							"Southwestern Europe is a region in western and southern Europe. It can be referred to as Latin Europe as, generally speaking, Romance languages and Roman Catholic Christianity are endemic, through the heritage of the Roman Empire. There are also Islamic remnants in parts of the region, especially Southern Spain thanks to it being part of the Islamic empire. The region contains Portugal, Spain, France, Italy and Malta as well as some of Europe's smallest countries: Andorra, Monaco, San Marino, and the Vatican City. These countries have around 180 million inhabitants together.Southwestern Europe's cultural attractions, including archaeological sites, architecture and art museums, are among the most visited in the world. The countries are also famous for their beaches, their cuisine, and their wine. ";
+						break;
+					case 'Salvic':
+						resultExplain =
+							'Slavs are an ethno-linguistic group of people who speak the various Slavic languages of the larger Balto-Slavic linguistic group of the Indo-European languages. They are native to Eurasia, stretching from Central, Southeastern and Eastern Europe, all the way north and eastwards to Northeast Europe, Northern Asia (Siberia and the Russian Far East), and Central Asia (especially Kazakhstan and Turkmenistan), as well as historically in Western Europe (particularly in Eastern Germany) and Western Asia (including Anatolia)From the early 6th century they spread to inhabit most of Central, Eastern and Southeastern Europe. Today, there is a large Slavic diaspora throughout Japan and the Americas, particularly in the United States, Canada, Brazil and Argentina as a result of immigration. ';
+						break;
+					case 'Anglo-Saxon':
+						resultExplain =
+							'The Anglo-Saxons were the members of Germanic-speaking groups who migrated to the southern half of the island of Great Britain from nearby northwestern Europe. Anglo-Saxon history thus begins during the period of sub-Roman Britain following the end of Roman control, and traces the establishment of Anglo-Saxon kingdoms in the 5th and 6th centuries (conventionally identified as seven main kingdoms: Northumbria, Mercia, East Anglia, Essex, Kent, Sussex, and Wessex). Their Christianisation during the 7th century; the threat of Viking invasions and Danish settlers; the gradual unification of England under the Wessex hegemony during the 9th and 10th centuries; and ending with the Norman conquest of England by William the Conqueror in 1066.';
+						break;
+					case 'Malay':
+						resultExplain =
+							'Malays are an Austronesian ethnic group native to the eastern Sumatra, Malay Peninsula and coastal Borneo, as well as the smaller islands that lie between these locations — areas that are collectively known as the Malay world. These locations are today part of the countries of Malaysia, Indonesia (Sumatra, Bangka Belitung Islands, Borneo (Kalimantan) and Riau Islands), southern part of Thailand (Pattani, Satun, Songkhla, Yala and Narathiwat), Singapore and Brunei Darussalam. ';
+						break;
+					case 'Turk':
+						resultExplain =
+							"The Turkish people, or simply the Turks, are the world's largest Turkic ethnic group; they speak various dialects of the Turkish language and form a majority in Turkey and Northern Cyprus. In addition, centuries-old ethnic Turkish communities still live across other former territories of the Ottoman Empire. The ethnic Turks can be distinguished by a number of cultural and regional variants, but do not function as separate ethnic groups.";
+						break;
+					case 'Bedouin':
+						resultExplain =
+							'Bedouin, derived from the Arabic, a generic name for a desert-dweller, is a term generally applied to Arab nomadic pastoralist groups, who are found throughout most of the desert belt extending from the Atlantic coast of the Sahara via the Western Desert, Sinai, and Negev to the eastern coast of the Arabian desert. It is occasionally used to refer to non-Arab groups as well, notably the Beja of the African coast of the Red Sea. They constitute only a small portion of the total population of the Middle East although the area they inhabit is large due to their nomadic, or former nomadic lifestyle. ';
+						break;
+					case 'Han':
+						resultExplain =
+							'The Han dynasty (206 BCE – 220 CE) was the second imperial dynasty of China. It followed the Qin dynasty (221–206 BCE), which had unified the Warring States of China by conquest. It was founded by Liu Bang (known posthumously as Emperor Gaozu of Han). The dynasty is divided into two periods: the Western Han (206 BCE – 9 CE) and the Eastern Han (25–220 CE), interrupted briefly by the Xin dynasty (9–23 CE) of Wang Mang. ';
+						break;
+					case 'Maasai':
+						resultExplain =
+							'The Maasai are a Nilotic ethnic group inhabiting northern, central and southern Kenya and northern Tanzania. They are among the best known local populations internationally due to their residence near the many game parks of the African Great Lakes, and their distinctive customs and dress. The Maasai speak the Maa language, a member of the Nilotic language family that is related to the Dinka, Kalenjin and Nuer languages. ';
+						break;
+					case 'Zulu':
+						resultExplain =
+							'Zulu people are an Nguni ethnic group in Southern Africa. The Zulu people are the largest ethnic group and nation in South Africa with an estimated 10–12 million people living mainly in the province of KwaZulu-Natal.They originated from Nguni communities who took part in the Bantu migrations over millennia. As the clans integrated together, the rulership of Shaka brought success to the Zulu nation due to his improved military tactics and organization. ';
+						break;
+					case 'Yoruba':
+						resultExplain =
+							'The Yoruba people are a Sub-Saharan African ethnic group who inhabit West Africa and mainly reside in the parts of Nigeria, Benin, and Togo that constitute Yorubaland. The Yorubas constitute around 42 million people in Africa, are a few hundred thousand outside the continent, and bear further representation among members of the African diaspora.Most Yoruba people speak the Yoruba language, which is the Niger-Congo language with the largest number of native or L1 speakers.';
+						break;
+					default:
+						resultExplain = 'N/A';
+				}
+				document.getElementById('print-explain').innerHTML = resultExplain;
+
+				var barWidth;
+				for (let i = 0; i < maxPredictions; i++) {
+					barWidth = Math.round(prediction[i].probability.toFixed(2) * 100) + '%';
+					var label =
+						"<div class='race-label d-flex align-items-center'>" +
+						prediction[i].className +
+						'</div>';
+					var bar =
+						"<div class='container'><div class='skill' style='width: " +
+						barWidth +
+						"'>" +
+						barWidth +
+						'</div></div>';
+					labelContainer.childNodes[i].innerHTML = label + bar;
+				}
+			}
+		</script>
+	</body>
+</html>
